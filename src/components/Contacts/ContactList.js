@@ -1,14 +1,29 @@
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts, getFilters } from '../../redux/selectors';
 import {
   ListOfContacts,
   ContactItem,
   DeleteBtn,
   ContactWrapper,
 } from './ContactList.styled';
+import { deleteContact } from '../../redux/contactsSlise';
 
-export const ContactList = ({ contacts, onDelete }) => {
+export const ContactList = () => {
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilters);
+  const dispatch = useDispatch();
+
+  const handleDelete = id => {
+    dispatch(deleteContact(id));
+  };
+
+  const visibleContacts = contacts.filter(contact => {
+    return contact.firstName.toLowerCase().includes(filter.toLowerCase());
+  });
+
   return (
     <ListOfContacts>
-      {contacts.map(contact => {
+      {visibleContacts.map(contact => {
         return (
           <ContactItem key={contact.id}>
             <ContactWrapper>
@@ -17,7 +32,7 @@ export const ContactList = ({ contacts, onDelete }) => {
               </p>
               <DeleteBtn
                 onClick={() => {
-                  onDelete(contact.id);
+                  handleDelete(contact.id);
                 }}
               >
                 Delete
